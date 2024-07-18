@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('ideaForm');
     const ideasContainer = document.getElementById('ideasContainer');
+    const mainMessage = document.getElementById('mainMessage');
 
     // Load ideas from local storage
     loadIdeas();
@@ -39,8 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Create new idea object
-        const idea = { label, category, message };
+        // Create new idea object with status 'pending'
+        const idea = { label, category, message, status: 'pending' };
 
         // Save idea to local storage
         saveIdeaToLocalStorage(idea);
@@ -64,11 +65,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createIdeaCard(idea) {
-        const { label, category, message } = idea;
+        const { label, category, message, status } = idea;
 
         const ideaCard = document.createElement('div');
         ideaCard.className = 'card border-dark mb-3';
-        ideaCard.style.maxWidth = '18rem';
+        ideaCard.style.maxWidth = '20rem';
+
+        // Apply styles based on status
+        applyStatusStyles(ideaCard, status);
 
         ideaCard.innerHTML = `
             <div class="card-header bg-transparent border-dark">${label}</div>
@@ -91,18 +95,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Add approve functionality
         ideaCard.querySelector('.approveBtn').addEventListener('click', function () {
-            ideaCard.querySelector('.card-body').style.backgroundColor = 'lightgreen';
+            ideaCard.style.borderColor = 'green';
+            updateIdeaStatus(idea, 'approved');
             disableApproveDisapproveButtons(ideaCard);
+            showMessage(`Votre idée "${idea.label}" a été approuvée.`, 'success');
         });
 
         // Add disapprove functionality
         ideaCard.querySelector('.disapproveBtn').addEventListener('click', function () {
-            ideaCard.querySelector('.card-body').style.backgroundColor = 'lightcoral';
+            ideaCard.style.borderColor = 'red';
+            updateIdeaStatus(idea, 'disapproved');
             disableApproveDisapproveButtons(ideaCard);
         });
 
         // Append the card to the container
         ideasContainer.appendChild(ideaCard);
+    }
+
+    function updateIdeaStatus(ideaToUpdate, status) {
+        let ideas = JSON.parse(localStorage.getItem('ideas')) || [];
+        ideas = ideas.map(idea => {
+            if (idea.label === ideaToUpdate.label && idea.category === ideaToUpdate.category && idea.message === ideaToUpdate.message) {
+                idea.status = status;
+            }
+            return idea;
+        });
+        localStorage.setItem('ideas', JSON.stringify(ideas));
+    }
+
+    function applyStatusStyles(ideaCard, status) {
+        if (status === 'approved') {
+            ideaCard.style.borderColor = 'green';
+        } else if (status === 'disapproved') {
+            ideaCard.style.borderColor = 'red';
+        } else {
+            ideaCard.style.borderColor = 'dark';
+        }
     }
 
     function disableApproveDisapproveButtons(ideaCard) {
@@ -116,22 +144,12 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('ideas', JSON.stringify(ideas));
     }
 
-    // MutationObserver to monitor changes in the ideasContainer
-    const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            console.log('Mutation type:', mutation.type);
-            if (mutation.addedNodes.length > 0) {
-                console.log('Idea added:', mutation.addedNodes[0]);
-            }
-            if (mutation.removedNodes.length > 0) {
-                console.log('Idea removed:', mutation.removedNodes[0]);
-            }
-        });
-    });
-
-    // Configuration of the observer:
-    const config = { childList: true };
-
-    // Pass in the target node, as well as the observer options
-    observer.observe(ideasContainer, config);
+    function showMessage(message, type) {
+        mainMessage.textContent = message;
+        mainMessage.className = `alert alert-${type}`;
+        mainMessage.style.display = 'block';
+        setTimeout(() => {
+            mainMessage.style.display = 'none';
+        }, 3000);
+    }
 });

@@ -1,28 +1,29 @@
-body {
-    background: hsl(219, 26%, 89%);
-    color: hsl(0, 0%, 0%);
-    font-family: Arial, sans-serif;
-
-}
-
-.btn {
-    margin-right: 5px;
-}
-
-header {
-    background-image: url('https://visme.co/blog/wp-content/uploads/2021/01/header-3.png');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    text-align: center;
-    padding: 50px 0;
-}
-
-footer {
-    background-color: #343a40;
-    color: white;
-    padding: 20px 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
+        body {
+            background: #ffffff;
+            color: hsl(0, 0%, 0%);
+            font-family: Arial, sans-serif;
+        
+        }
+        
+        .btn {
+            margin-right: 5px;
+        }
+        
+        header {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqxYM-dPfXAo52zoZMb8LbEL8UCtUK99cM9A&s');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 50px 0;
+            height: 700px;
+        }
+        
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
